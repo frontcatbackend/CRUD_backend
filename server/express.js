@@ -7,8 +7,14 @@ import helmet from 'helmet'
 import Template from './../template'
 import userRoutes from './routes/user.routes'
 import authRoutes from './routes/auth.routes'
+import devBundle from './devBundle'
+import path from 'path'
+
 
 const app = express()
+devBundle.compile(app)
+const CURRENT_WORKING_DIR = process.cwd()
+
 
 app.get('/', (req,res)=>{
   res.status(200).send(Template())
@@ -23,6 +29,7 @@ app.use(cors())
 
 app.use('/', userRoutes)
 app.use('/', authRoutes)
+app.use('/dist', express.static(path.join(CURRENT_WORKING_DIR, 'dist')))
 
 app.use((err, req, res, next) => {
   if (err.name === 'UnauthorizedError') {
